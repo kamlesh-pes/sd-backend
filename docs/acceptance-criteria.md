@@ -1,0 +1,27 @@
+# Backend MVP Acceptance Criteria
+
+- [ ] Typo search works.
+- [ ] Price/total tampering cannot alter server totals.
+- [ ] Concurrent final-unit checkout cannot oversell.
+- [ ] Admin APIs reject non-admins with 403.
+- [ ] Guest order creation returns 401.
+- [ ] Login rate limit returns 429 + Retry-After.
+- [ ] Passwords securely hashed.
+- [ ] Mobile OTP-only login/registration works.
+- [ ] OTP expiry, max attempts, and throttling work.
+- [ ] OTP plaintext never stored.
+- [ ] Reports/metrics/CSV work and access is audited.
+- [ ] 23h unshipped cancellation succeeds.
+- [ ] 25h or shipped cancellation is blocked and support flow is available.
+- [ ] Cancellation restores stock and records history/audit.
+- [ ] Support request persists and does not auto-cancel.
+- [ ] Discounts support percentage/flat amount and scheduling.
+- [ ] Expired discounts stop applying.
+- [ ] OrderStatusHistory is authoritative.
+- [ ] Customer cannot set order status.
+- [ ] PII encryption/blind-index lookup works.
+- [ ] Logs mask PII.
+- [ ] Guest cart merge works.
+- [ ] Security settings have bounds and audit.
+- [ ] Changed TTLs apply to newly issued tokens after config-cache refresh.
+- [ ] Stale refresh-token reuse revokes the token family.
