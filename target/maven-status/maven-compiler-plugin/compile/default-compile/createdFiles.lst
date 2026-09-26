@@ -45,6 +45,7 @@ com\sahastra\backend\exception\ApplicationException.class
 com\sahastra\backend\api\dto\CartItemResponse$CartItemResponseBuilder.class
 com\sahastra\backend\api\dto\PasswordResetConfirmRequest.class
 com\sahastra\backend\domain\entity\Category.class
+com\sahastra\backend\api\dto\ReportQuery.class
 com\sahastra\backend\domain\repository\BrandRepository.class
 com\sahastra\backend\domain\enums\UserStatus.class
 com\sahastra\backend\api\dto\ErrorResponse$ErrorDetails.class

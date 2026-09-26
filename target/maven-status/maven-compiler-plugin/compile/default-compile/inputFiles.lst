@@ -2,6 +2,7 @@ C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\controller\AdminCatalogController.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\controller\AdminDiscountController.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\controller\AdminProductController.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\controller\AdminReportController.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\controller\AuthenticationController.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\controller\CartController.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\controller\HealthController.java
@@ -9,7 +10,9 @@ C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\controller\ProductController.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\controller\SearchController.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\ApiResponse.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\AuditReportResponse.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\AuthResponse.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\CancellationReportResponse.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\CancelOrderRequest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\CartItemRequest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\CartItemResponse.java
@@ -20,6 +23,7 @@ C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\ErrorResponse.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\LoginRequest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\OrderItemResponse.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\OrderReportResponse.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\OrderRequest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\OrderResponse.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\OTPVerificationRequest.java
@@ -31,8 +35,10 @@ C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\ProductResponse.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\RefreshTokenRequest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\RegisterRequest.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\ReportQuery.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\SearchProductResponse.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\SearchRequest.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\SummaryMetricsResponse.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\SupportRequestRequest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\UserDTO.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\common\CorrelationIdContext.java
@@ -100,4 +106,5 @@ C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\ser
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\service\PaymentService.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\service\ProductIndexService.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\service\ProductService.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\service\ReportService.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\service\SearchService.java
