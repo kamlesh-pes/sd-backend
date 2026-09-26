@@ -1,0 +1,111 @@
+version: '3.9'
+
+services:
+  # PostgreSQL 16 Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: sahastra-postgres
+    environment:
+      POSTGRES_DB: sahastra_db
+      POSTGRES_USER: sahastra_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-sahastra_password}
+      POSTGRES_INITDB_ARGS: "-c shared_preload_libraries=pgcrypto"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sahastra_user -d sahastra_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sahastra-network
+
+  # Redis for Caching and Session Management
+  redis:
+    image: redis:7-alpine
+    container_name: sahastra-redis
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sahastra-network
+
+  # OpenSearch for Full-Text Search (Phase 4)
+  opensearch:
+    image: opensearchproject/opensearch:2.11.1
+    container_name: sahastra-opensearch
+    environment:
+      - node.name=opensearch-node
+      - discovery.seed_hosts=opensearch
+      - cluster.initial_master_nodes=opensearch-node
+      - OPENSEARCH_SECURITY_SSL_HTTP_ENABLED=false
+      - OPENSEARCH_SECURITY_SSL_HTTP_PEMCERT_FILEPATH=certs/node1.pem
+      - OPENSEARCH_SECURITY_SSL_HTTP_PEMKEY_FILEPATH=certs/node1-key.pem
+      - OPENSEARCH_SECURITY_SSL_HTTP_PEMTRUSTEDCAS_FILEPATH=certs/root-ca.pem
+      - OPENSEARCH_SECURITY_SSL_HTTP_ENABLED=false
+      - DISABLE_SECURITY_PLUGIN=true
+      - JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"' || grep -q '\"status\":\"yellow\"'"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    networks:
+      - sahastra-network
+
+  # pgAdmin for PostgreSQL Management (optional, for development only)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: sahastra-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@sahastra.local
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    profiles:
+      - dev
+    networks:
+      - sahastra-network
+
+  # Redis Commander for Redis Management (optional, for development only)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: sahastra-redis-commander
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    profiles:
+      - dev
+    networks:
+      - sahastra-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  opensearch_data:
+    driver: local
+
+networks:
+  sahastra-network:
+    driver: bridge
