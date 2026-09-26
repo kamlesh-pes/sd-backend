@@ -72,4 +72,3 @@ com\sahastra\backend\domain\repository\RefreshTokenRepository.class
 com\sahastra\backend\api\dto\OTPVerificationRequest.class
 com\sahastra\backend\service\AuthenticationService.class
 com\sahastra\backend\domain\repository\AuditLogRepository.class
-db\migration\V6__order_tables.sql
