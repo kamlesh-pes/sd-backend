@@ -3,6 +3,9 @@ spring:
     name: sahastra-backend
   profiles:
     active: dev
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
 
   datasource:
     url: jdbc:postgresql://localhost:5432/sahastra_db
@@ -47,7 +50,7 @@ spring:
     type: redis
     redis:
       time-to-live: 600000
-      key-prefix: sd:
+      key-prefix: "sd:"
 
   servlet:
     multipart:

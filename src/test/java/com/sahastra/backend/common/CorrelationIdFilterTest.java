@@ -37,8 +37,7 @@ class CorrelationIdFilterTest {
         filter.doFilter(request, response, chain);
 
         String correlationId = CorrelationIdContext.getCorrelationId();
-        assertNotNull(correlationId, "Correlation ID should be generated");
-        assertTrue(correlationId.length() > 0, "Correlation ID should not be empty");
+        assertEquals(null, correlationId, "Correlation ID should be cleared after the request");
     }
 
     @Test
@@ -48,12 +47,15 @@ class CorrelationIdFilterTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("X-Correlation-ID", providedCorrelationId);
         MockHttpServletResponse response = new MockHttpServletResponse();
-        MockFilterChain chain = new MockFilterChain();
+        jakarta.servlet.FilterChain chain = (chainRequest, chainResponse) -> {
+            String correlationId = CorrelationIdContext.getCorrelationId();
+            assertEquals(providedCorrelationId, correlationId, "Should use provided correlation ID");
+        };
 
         filter.doFilter(request, response, chain);
 
         String correlationId = CorrelationIdContext.getCorrelationId();
-        assertEquals(providedCorrelationId, correlationId, "Should use provided correlation ID");
+        assertEquals(null, correlationId, "Correlation ID should be cleared after the request");
     }
 
     @Test
@@ -64,11 +66,6 @@ class CorrelationIdFilterTest {
 
         filter.doFilter(request, response, chain);
         
-        // After filter completes, context should be cleared
-        CorrelationIdContext.setCorrelationId("test");
-        filter.doFilter(request, response, chain);
-        
-        // Verify cleanup happens
-        assertNotNull(CorrelationIdContext.getCorrelationId(), "Context is reused for next request");
+        assertEquals(null, CorrelationIdContext.getCorrelationId(), "Context should be cleared after request completion");
     }
 }

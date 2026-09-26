@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.sahastra.backend.service.DiscountServiceTest
 -------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.803 s -- in com.sahastra.backend.service.DiscountServiceTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.557 s -- in com.sahastra.backend.service.DiscountServiceTest

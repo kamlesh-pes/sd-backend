@@ -1,6 +1,0 @@
-com\sahastra\backend\common\CorrelationIdFilterTest.class
-com\sahastra\backend\api\controller\HealthControllerTest.class
-com\sahastra\backend\domain\ProductPricingTest.class
-com\sahastra\backend\service\CartServiceTest.class
-com\sahastra\backend\service\OTPServiceTest.class
-com\sahastra\backend\exception\ExceptionTest.class

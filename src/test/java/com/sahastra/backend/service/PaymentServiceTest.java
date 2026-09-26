@@ -8,6 +8,7 @@ import com.sahastra.backend.domain.enums.OrderStatus;
 import com.sahastra.backend.domain.repository.OrderRepository;
 import com.sahastra.backend.domain.repository.OrderStatusHistoryRepository;
 import com.sahastra.backend.exception.BusinessException;
+import com.sahastra.backend.payment.MockPaymentProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,6 +31,9 @@ class PaymentServiceTest {
 
     @Mock
     private OrderStatusHistoryRepository orderStatusHistoryRepository;
+
+        @Mock
+        private MockPaymentProvider paymentProvider;
 
     @InjectMocks
     private PaymentService paymentService;
@@ -56,6 +60,10 @@ class PaymentServiceTest {
                 .build();
 
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        when(paymentProvider.charge("card", new BigDecimal("64.99"), "USD", orderId.toString()))
+                .thenReturn(com.sahastra.backend.payment.PaymentResult.builder()
+                        .success(true).paymentId("payment-1").status("SUCCEEDED").build());
+        when(paymentProvider.getName()).thenReturn("mock");
 
         PaymentRequest request = PaymentRequest.builder()
                 .provider("mock")

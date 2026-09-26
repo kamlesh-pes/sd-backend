@@ -15,6 +15,7 @@ import com.sahastra.backend.domain.repository.CartItemRepository;
 import com.sahastra.backend.domain.repository.CartRepository;
 import com.sahastra.backend.domain.repository.IdempotencyKeyRepository;
 import com.sahastra.backend.domain.repository.OrderRepository;
+import com.sahastra.backend.domain.repository.OrderStatusHistoryRepository;
 import com.sahastra.backend.domain.repository.ProductRepository;
 import com.sahastra.backend.domain.repository.SupportRequestRepository;
 import com.sahastra.backend.domain.repository.UserRepository;
@@ -36,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,6 +45,9 @@ class OrderServiceTest {
 
     @Mock
     private OrderRepository orderRepository;
+
+        @Mock
+        private OrderStatusHistoryRepository orderStatusHistoryRepository;
 
     @Mock
     private CartRepository cartRepository;
@@ -107,6 +112,7 @@ class OrderServiceTest {
         when(cartRepository.findByUserId(userId)).thenReturn(Optional.of(cart));
         when(idempotencyKeyRepository.findByUserIdAndKey(userId, "idem-1")).thenReturn(Optional.empty());
         when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
+        when(orderRepository.save(any(Order.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         OrderResponse response = orderService.createOrder(userId, "idem-1", request);
 
@@ -225,4 +231,27 @@ class OrderServiceTest {
         assertNotNull(supportRequest);
         assertEquals("OPEN", supportRequest.getStatus().name());
     }
+
+        @Test
+        void cancelOrderAfter24HoursDoesNotChangeOrderAndRequiresSupport() {
+                UUID userId = UUID.randomUUID();
+                UUID orderId = UUID.randomUUID();
+                User user = User.builder().id(userId).email("buyer@example.com").firstName("Buyer").lastName("User").passwordHash("hash").build();
+                Order order = Order.builder()
+                                .id(orderId)
+                                .user(user)
+                                .status(OrderStatus.CONFIRMED)
+                                .createdAt(Instant.now().minusSeconds(25 * 60 * 60))
+                                .build();
+
+                when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+                when(supportRequestRepository.findByOrderIdAndUserId(orderId, userId)).thenReturn(Optional.empty());
+                when(supportRequestRepository.save(any(SupportRequest.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+                assertThrows(BusinessException.class,
+                                () -> orderService.cancelOrder(userId, orderId, "Please cancel"));
+
+                assertEquals(OrderStatus.CONFIRMED, order.getStatus());
+                verify(supportRequestRepository).save(any(SupportRequest.class));
+        }
 }
