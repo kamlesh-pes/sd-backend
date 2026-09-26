@@ -4,6 +4,7 @@ C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\controller\AuthenticationController.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\controller\CartController.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\controller\HealthController.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\controller\OrderController.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\controller\ProductController.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\controller\SearchController.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\ApiResponse.java
@@ -14,6 +15,8 @@ C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\CatalogNameRequest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\ErrorResponse.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\LoginRequest.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\OrderRequest.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\OrderResponse.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\OTPVerificationRequest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\PasswordResetConfirmRequest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\PasswordResetRequest.java
@@ -36,12 +39,17 @@ C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\dom
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\entity\Cart.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\entity\CartItem.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\entity\Category.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\entity\IdempotencyKey.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\entity\Order.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\entity\OrderItem.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\entity\OrderStatusHistory.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\entity\OTP.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\entity\Product.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\entity\RefreshToken.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\entity\SystemSetting.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\entity\User.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\enums\DiscountType.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\enums\OrderStatus.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\enums\TokenType.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\enums\UserRole.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\enums\UserStatus.java
@@ -50,6 +58,10 @@ C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\dom
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\repository\CartItemRepository.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\repository\CartRepository.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\repository\CategoryRepository.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\repository\IdempotencyKeyRepository.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\repository\OrderItemRepository.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\repository\OrderRepository.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\repository\OrderStatusHistoryRepository.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\repository\OTPRepository.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\repository\ProductRepository.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\repository\RefreshTokenRepository.java
@@ -68,6 +80,7 @@ C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\sec
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\security\util\OTPUtil.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\service\AuthenticationService.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\service\CartService.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\service\OrderService.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\service\OTPService.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\service\ProductIndexService.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\service\ProductService.java
