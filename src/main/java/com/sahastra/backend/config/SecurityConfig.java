@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import com.sahastra.backend.security.filter.JwtAuthenticationFilter;
+import com.sahastra.backend.security.filter.RateLimitFilter;
 
 /**
  * Spring Security configuration for authentication and authorization.
@@ -21,9 +22,11 @@ import com.sahastra.backend.security.filter.JwtAuthenticationFilter;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final RateLimitFilter rateLimitFilter;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, RateLimitFilter rateLimitFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.rateLimitFilter = rateLimitFilter;
     }
 
     @Bean
@@ -36,6 +39,12 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
+                .headers(headers -> headers
+                    .contentTypeOptions(Customizer.withDefaults())
+                    .frameOptions(frame -> frame.deny())
+                        .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000))
+                        .referrerPolicy(referrer -> referrer.policy(
+                            org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)))
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/actuator/health/**").permitAll()
                     .requestMatchers("/api/v1/health/**").permitAll()
@@ -49,6 +58,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

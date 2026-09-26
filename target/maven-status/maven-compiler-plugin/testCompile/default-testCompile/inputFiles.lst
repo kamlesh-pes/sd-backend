@@ -2,6 +2,7 @@ C:\Users\Administrator\sd-repo\sd-backend\src\test\java\com\sahastra\backend\api
 C:\Users\Administrator\sd-repo\sd-backend\src\test\java\com\sahastra\backend\common\CorrelationIdFilterTest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\test\java\com\sahastra\backend\domain\ProductPricingTest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\test\java\com\sahastra\backend\exception\ExceptionTest.java
+C:\Users\Administrator\sd-repo\sd-backend\src\test\java\com\sahastra\backend\security\ratelimit\RateLimitServiceTest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\test\java\com\sahastra\backend\service\CartServiceTest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\test\java\com\sahastra\backend\service\DiscountServiceTest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\test\java\com\sahastra\backend\service\OrderServiceTest.java

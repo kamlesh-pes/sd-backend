@@ -31,6 +31,8 @@ public class SystemSettingService {
     public static final String OTP_EXPIRY_MINUTES = "security.otp.expiry-minutes";
     public static final String OTP_MAX_ATTEMPTS = "security.otp.max-attempts";
     public static final String LOGIN_RATE_LIMIT_PER_MINUTE = "security.rate-limit.login-per-minute";
+    public static final String OTP_RATE_LIMIT_PER_MINUTE = "security.rate-limit.otp-per-minute";
+    public static final String API_RATE_LIMIT_PER_MINUTE = "security.rate-limit.api-per-minute";
 
     private static final Map<String, Definition> DEFINITIONS = definitions();
 
@@ -147,6 +149,8 @@ public class SystemSettingService {
         definitions.put(OTP_EXPIRY_MINUTES, new Definition("5", "OTP lifetime in minutes", "1", "15"));
         definitions.put(OTP_MAX_ATTEMPTS, new Definition("5", "Maximum OTP verification attempts", "1", "10"));
         definitions.put(LOGIN_RATE_LIMIT_PER_MINUTE, new Definition("5", "Login attempts allowed per minute", "1", "20"));
+        definitions.put(OTP_RATE_LIMIT_PER_MINUTE, new Definition("5", "OTP and password-reset requests allowed per minute", "1", "20"));
+        definitions.put(API_RATE_LIMIT_PER_MINUTE, new Definition("120", "API requests allowed per minute per client address", "10", "1000"));
         return Map.copyOf(definitions);
     }
 
