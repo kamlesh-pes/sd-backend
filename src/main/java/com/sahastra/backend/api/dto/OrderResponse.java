@@ -31,16 +31,3 @@ public class OrderResponse {
     private Instant createdAt;
     private List<OrderItemResponse> items;
 }
-
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-class OrderItemResponse {
-    private UUID productId;
-    private String productName;
-    private String sku;
-    private int quantity;
-    private BigDecimal unitPrice;
-    private BigDecimal lineTotal;
-}
