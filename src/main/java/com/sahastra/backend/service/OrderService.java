@@ -10,14 +10,17 @@ import com.sahastra.backend.domain.entity.Order;
 import com.sahastra.backend.domain.entity.OrderItem;
 import com.sahastra.backend.domain.entity.OrderStatusHistory;
 import com.sahastra.backend.domain.entity.Product;
+import com.sahastra.backend.domain.entity.SupportRequest;
 import com.sahastra.backend.domain.entity.User;
 import com.sahastra.backend.domain.enums.OrderStatus;
+import com.sahastra.backend.domain.enums.SupportRequestStatus;
 import com.sahastra.backend.domain.repository.CartItemRepository;
 import com.sahastra.backend.domain.repository.CartRepository;
 import com.sahastra.backend.domain.repository.IdempotencyKeyRepository;
 import com.sahastra.backend.domain.repository.OrderRepository;
 import com.sahastra.backend.domain.repository.OrderStatusHistoryRepository;
 import com.sahastra.backend.domain.repository.ProductRepository;
+import com.sahastra.backend.domain.repository.SupportRequestRepository;
 import com.sahastra.backend.domain.repository.UserRepository;
 import com.sahastra.backend.exception.BusinessException;
 import com.sahastra.backend.exception.ResourceNotFoundException;
@@ -45,6 +48,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final IdempotencyKeyRepository idempotencyKeyRepository;
     private final OrderStatusHistoryRepository orderStatusHistoryRepository;
+    private final SupportRequestRepository supportRequestRepository;
 
     public OrderService(OrderRepository orderRepository,
                         CartRepository cartRepository,
@@ -52,7 +56,8 @@ public class OrderService {
                         ProductRepository productRepository,
                         UserRepository userRepository,
                         IdempotencyKeyRepository idempotencyKeyRepository,
-                        OrderStatusHistoryRepository orderStatusHistoryRepository) {
+                        OrderStatusHistoryRepository orderStatusHistoryRepository,
+                        SupportRequestRepository supportRequestRepository) {
         this.orderRepository = orderRepository;
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
@@ -60,6 +65,88 @@ public class OrderService {
         this.userRepository = userRepository;
         this.idempotencyKeyRepository = idempotencyKeyRepository;
         this.orderStatusHistoryRepository = orderStatusHistoryRepository;
+        this.supportRequestRepository = supportRequestRepository;
+    }
+
+    @Transactional
+    public Order cancelOrder(UUID userId, UUID orderId, String reason) {
+        if (reason == null || reason.isBlank()) {
+            throw new ValidationException("Cancellation reason is required");
+        }
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order", orderId.toString()));
+
+        if (!order.getUser().getId().equals(userId)) {
+            throw new BusinessException("ORDER_ACCESS_DENIED", "User does not own this order");
+        }
+
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            throw new BusinessException("ORDER_ALREADY_CANCELLED", "Order is already cancelled");
+        }
+
+        if (!canSelfCancel(order)) {
+            requestSupport(userId, orderId, reason);
+            throw new BusinessException("CANCELLATION_REQUIRES_SUPPORT_REVIEW",
+                    "This order cannot be self-cancelled. A support request has been created for review.");
+        }
+
+        OrderStatus previousStatus = order.getStatus();
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+
+        for (OrderItem item : order.getItems()) {
+            Product product = productRepository.findById(item.getProductId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Product", item.getProductId().toString()));
+            product.setStock(product.getStock() + item.getQuantity());
+            productRepository.save(product);
+        }
+
+        orderStatusHistoryRepository.save(OrderStatusHistory.builder()
+                .order(order)
+                .fromStatus(previousStatus)
+                .toStatus(OrderStatus.CANCELLED)
+                .actorId(userId.toString())
+                .actorType("CUSTOMER")
+                .reason(reason)
+                .build());
+
+        return order;
+    }
+
+    @Transactional
+    public SupportRequest requestSupport(UUID userId, UUID orderId, String message) {
+        if (message == null || message.isBlank()) {
+            throw new ValidationException("Support message is required");
+        }
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order", orderId.toString()));
+
+        if (!order.getUser().getId().equals(userId)) {
+            throw new BusinessException("ORDER_ACCESS_DENIED", "User does not own this order");
+        }
+
+        return supportRequestRepository.findByOrderIdAndUserId(orderId, userId)
+                .orElseGet(() -> supportRequestRepository.save(SupportRequest.builder()
+                        .order(order)
+                        .user(order.getUser())
+                        .message(message)
+                        .status(SupportRequestStatus.OPEN)
+                        .build()));
+    }
+
+    private boolean canSelfCancel(Order order) {
+        if (order.getStatus() == null || order.getStatus() == OrderStatus.CANCELLED) {
+            return false;
+        }
+
+        if (order.getStatus() == OrderStatus.SHIPPED || order.getStatus() == OrderStatus.OUT_FOR_DELIVERY || order.getStatus() == OrderStatus.DELIVERED) {
+            return false;
+        }
+
+        Instant cutoff = Instant.now().minusSeconds(24L * 60L * 60L);
+        return order.getCreatedAt() != null && !order.getCreatedAt().isBefore(cutoff);
     }
 
     @Transactional

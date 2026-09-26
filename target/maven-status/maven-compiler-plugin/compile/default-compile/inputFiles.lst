@@ -9,6 +9,7 @@ C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\controller\SearchController.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\ApiResponse.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\AuthResponse.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\CancelOrderRequest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\CartItemRequest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\CartItemResponse.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\CartResponse.java
@@ -28,6 +29,7 @@ C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\RegisterRequest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\SearchProductResponse.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\SearchRequest.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\SupportRequestRequest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\api\dto\UserDTO.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\common\CorrelationIdContext.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\common\CorrelationIdFilter.java
@@ -48,10 +50,12 @@ C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\dom
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\entity\OTP.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\entity\Product.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\entity\RefreshToken.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\entity\SupportRequest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\entity\SystemSetting.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\entity\User.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\enums\DiscountType.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\enums\OrderStatus.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\enums\SupportRequestStatus.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\enums\TokenType.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\enums\UserRole.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\enums\UserStatus.java
@@ -67,6 +71,7 @@ C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\dom
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\repository\OTPRepository.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\repository\ProductRepository.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\repository\RefreshTokenRepository.java
+C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\repository\SupportRequestRepository.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\domain\repository\UserRepository.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\event\ProductDeletedEvent.java
 C:\Users\Administrator\sd-repo\sd-backend\src\main\java\com\sahastra\backend\event\ProductEventListener.java
