@@ -7,7 +7,7 @@ import com.sahastra.backend.exception.BusinessException;
 import com.sahastra.backend.exception.ResourceNotFoundException;
 import com.sahastra.backend.security.util.OTPUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,14 +23,24 @@ public class OTPService {
     private final OTPUtil otpUtil;
     private final long expiryMinutes;
     private final int maxAttempts;
+    private final SystemSettingService systemSettingService;
 
+    @Autowired
     public OTPService(OTPRepository otpRepository, OTPUtil otpUtil,
-                      @Value("${security.otp.expiry-minutes:5}") long expiryMinutes,
-                      @Value("${security.otp.max-attempts:5}") int maxAttempts) {
+                      SystemSettingService systemSettingService) {
+        this.otpRepository = otpRepository;
+        this.otpUtil = otpUtil;
+        this.expiryMinutes = 5;
+        this.maxAttempts = 5;
+        this.systemSettingService = systemSettingService;
+    }
+
+    public OTPService(OTPRepository otpRepository, OTPUtil otpUtil, long expiryMinutes, int maxAttempts) {
         this.otpRepository = otpRepository;
         this.otpUtil = otpUtil;
         this.expiryMinutes = expiryMinutes;
         this.maxAttempts = maxAttempts;
+        this.systemSettingService = null;
     }
 
     @Transactional
@@ -41,8 +51,8 @@ public class OTPService {
                 .user(user)
                 .email(normalizedEmail)
                 .codeHash(otpUtil.hashOTPCode(code))
-                .expiresAt(Instant.now().plusSeconds(expiryMinutes * 60))
-                .maxAttempts(maxAttempts)
+                .expiresAt(Instant.now().plusSeconds(currentExpiryMinutes() * 60))
+                .maxAttempts(currentMaxAttempts())
                 .build();
         otpRepository.save(otp);
         // Delivery is intentionally delegated to the notification provider in the next phase.
@@ -57,8 +67,8 @@ public class OTPService {
                 .user(user)
                 .phone(normalizedPhone)
                 .codeHash(otpUtil.hashOTPCode(code))
-                .expiresAt(Instant.now().plusSeconds(expiryMinutes * 60))
-                .maxAttempts(maxAttempts)
+                .expiresAt(Instant.now().plusSeconds(currentExpiryMinutes() * 60))
+                .maxAttempts(currentMaxAttempts())
                 .build();
         otpRepository.save(otp);
         log.info("OTP generated for phone verification; delivery provider not configured");
@@ -100,5 +110,13 @@ public class OTPService {
             throw new BusinessException("INVALID_OTP", "OTP code is invalid");
         }
         otp.markVerified();
+    }
+
+    private long currentExpiryMinutes() {
+        return systemSettingService == null ? expiryMinutes : systemSettingService.getLong(SystemSettingService.OTP_EXPIRY_MINUTES);
+    }
+
+    private int currentMaxAttempts() {
+        return systemSettingService == null ? maxAttempts : Math.toIntExact(systemSettingService.getLong(SystemSettingService.OTP_MAX_ATTEMPTS));
     }
 }

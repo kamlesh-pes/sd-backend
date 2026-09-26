@@ -4,7 +4,6 @@ import com.sahastra.backend.api.dto.AuthResponse;
 import com.sahastra.backend.api.dto.LoginRequest;
 import com.sahastra.backend.api.dto.RegisterRequest;
 import com.sahastra.backend.api.dto.UserDTO;
-import com.sahastra.backend.common.CorrelationIdContext;
 import com.sahastra.backend.domain.entity.RefreshToken;
 import com.sahastra.backend.domain.entity.User;
 import com.sahastra.backend.domain.enums.UserRole;
@@ -16,7 +15,7 @@ import com.sahastra.backend.exception.ResourceNotFoundException;
 import com.sahastra.backend.exception.ValidationException;
 import com.sahastra.backend.security.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,21 +40,22 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
     private final OTPService otpService;
-    private final long refreshTokenExpiryDays;
+    private final SystemSettingService systemSettingService;
 
+    @Autowired
     public AuthenticationService(
             UserRepository userRepository,
             RefreshTokenRepository refreshTokenRepository,
             PasswordEncoder passwordEncoder,
             JwtTokenUtil jwtTokenUtil,
             OTPService otpService,
-            @Value("${security.jwt.refresh-token-expiry-days:7}") long refreshTokenExpiryDays) {
+            SystemSettingService systemSettingService) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenUtil = jwtTokenUtil;
         this.otpService = otpService;
-        this.refreshTokenExpiryDays = refreshTokenExpiryDays;
+        this.systemSettingService = systemSettingService;
     }
 
     /**
@@ -150,7 +150,7 @@ public class AuthenticationService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
-                .expiresIn(15 * 60) // 15 minutes in seconds
+                .expiresIn(Math.toIntExact(systemSettingService.getLong(SystemSettingService.ACCESS_TOKEN_EXPIRY_MINUTES) * 60))
                 .user(mapUserToDTO(user))
                 .build();
     }
@@ -211,7 +211,7 @@ public class AuthenticationService {
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
                 .tokenType("Bearer")
-                .expiresIn(15 * 60)
+                .expiresIn(Math.toIntExact(systemSettingService.getLong(SystemSettingService.ACCESS_TOKEN_EXPIRY_MINUTES) * 60))
                 .build();
     }
 
@@ -281,7 +281,7 @@ public class AuthenticationService {
      */
     private void saveRefreshToken(User user, String refreshToken, String tokenFamily) {
         String tokenHash = hashToken(refreshToken);
-        Instant expiresAt = Instant.now().plusSeconds(refreshTokenExpiryDays * 24 * 60 * 60);
+        Instant expiresAt = Instant.now().plusSeconds(systemSettingService.getLong(SystemSettingService.CUSTOMER_REFRESH_TOKEN_EXPIRY_DAYS) * 24 * 60 * 60);
 
         RefreshToken token = RefreshToken.builder()
                 .user(user)

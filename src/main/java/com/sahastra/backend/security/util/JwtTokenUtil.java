@@ -8,7 +8,9 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
+import com.sahastra.backend.service.SystemSettingService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -28,17 +30,19 @@ import java.util.UUID;
 public class JwtTokenUtil {
 
     private final SecretKey jwtSecret;
-    private final long accessTokenExpiryMs;
-    private final long refreshTokenExpiryMs;
+    private final SystemSettingService systemSettingService;
 
+    @Autowired
     public JwtTokenUtil(
             @Value("${security.jwt.secret:ChangeMe!ChangeMe!ChangeMe!ChangeMe!ChangeMe!ChangeMe!ChangeMe!ChangeMe!}") String secret,
-            @Value("${security.jwt.access-token-expiry-minutes:15}") long accessTokenExpiryMinutes,
-            @Value("${security.jwt.refresh-token-expiry-days:7}") long refreshTokenExpiryDays) {
-        
+            SystemSettingService systemSettingService) {
         this.jwtSecret = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.accessTokenExpiryMs = accessTokenExpiryMinutes * 60 * 1000;
-        this.refreshTokenExpiryMs = refreshTokenExpiryDays * 24 * 60 * 60 * 1000;
+        this.systemSettingService = systemSettingService;
+    }
+
+    public JwtTokenUtil(String secret, long accessTokenExpiryMinutes, long refreshTokenExpiryDays) {
+        this.jwtSecret = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.systemSettingService = null;
     }
 
     /**
@@ -48,7 +52,8 @@ public class JwtTokenUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", email);
         claims.put("isAdmin", isAdmin);
-        return generateToken(claims, userId.toString(), accessTokenExpiryMs);
+        long expiryMs = expiryMinutes(SystemSettingService.ACCESS_TOKEN_EXPIRY_MINUTES, 15);
+        return generateToken(claims, userId.toString(), expiryMs);
     }
 
     /**
@@ -58,7 +63,13 @@ public class JwtTokenUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("tokenFamily", tokenFamily);
         claims.put("type", "REFRESH");
-        return generateToken(claims, userId.toString(), refreshTokenExpiryMs);
+        long expiryMs = expiryMinutes(SystemSettingService.CUSTOMER_REFRESH_TOKEN_EXPIRY_DAYS, 7 * 24 * 60);
+        return generateToken(claims, userId.toString(), expiryMs);
+    }
+
+    private long expiryMinutes(String key, long fallbackMinutes) {
+        long minutes = systemSettingService == null ? fallbackMinutes : systemSettingService.getLong(key);
+        return minutes * 60_000L;
     }
 
     private String generateToken(Map<String, Object> claims, String subject, long expiryMs) {
