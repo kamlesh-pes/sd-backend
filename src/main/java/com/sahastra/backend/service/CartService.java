@@ -47,6 +47,11 @@ public class CartService {
 
     @Transactional
     public CartResponse getCart(UUID userId, String guestSessionId) {
+        if (userId != null && guestSessionId != null && !guestSessionId.isBlank()) {
+            Cart merged = mergeGuestCartIfPresent(userId, guestSessionId);
+            return toResponse(merged);
+        }
+
         Cart cart = findOrCreateCart(userId, guestSessionId);
         return toResponse(cart);
     }
@@ -125,35 +130,47 @@ public class CartService {
 
     @Transactional
     public CartResponse mergeGuestCart(UUID userId, String guestSessionId) {
+        return toResponse(mergeGuestCartIfPresent(userId, guestSessionId));
+    }
+
+    private Cart mergeGuestCartIfPresent(UUID userId, String guestSessionId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", userId.toString()));
 
         Optional<Cart> guestCartOpt = cartRepository.findByGuestSessionId(guestSessionId);
         if (guestCartOpt.isEmpty()) {
-            Optional<Cart> existing = cartRepository.findByUserId(userId);
-            return existing.map(this::toResponse).orElseGet(() -> getCart(userId, null));
+            return cartRepository.findByUserId(userId).orElseGet(() -> {
+                Cart created = Cart.builder().user(user).guestSessionId(null).active(true).build();
+                return cartRepository.save(created);
+            });
         }
 
         Cart guestCart = guestCartOpt.get();
-        Cart userCart = cartRepository.findByUserId(userId).orElseGet(() -> Cart.builder().user(user).active(true).build());
+        Cart userCart = cartRepository.findByUserId(userId).orElseGet(() -> {
+            Cart created = Cart.builder().user(user).guestSessionId(null).active(true).build();
+            return cartRepository.save(created);
+        });
         userCart.setUser(user);
+        userCart.setGuestSessionId(null);
 
         for (CartItem item : guestCart.getItems()) {
-            Optional<CartItem> existingItem = cartItemRepository.findByCartIdAndProductId(userCart.getId(), item.getProduct().getId());
+            Product product = item.getProduct();
+            Optional<CartItem> existingItem = cartItemRepository.findByCartIdAndProductId(userCart.getId(), product.getId());
+            int nextQuantity = item.getQuantity();
             if (existingItem.isPresent()) {
-                int mergedQty = existingItem.get().getQuantity() + item.getQuantity();
-                if (mergedQty > item.getProduct().getStock()) {
-                    mergedQty = item.getProduct().getStock();
+                nextQuantity += existingItem.get().getQuantity();
+                if (nextQuantity > product.getStock()) {
+                    nextQuantity = product.getStock();
                 }
-                existingItem.get().setQuantity(mergedQty);
-                existingItem.get().setUnitPrice(item.getProduct().effectivePrice(Instant.now()));
+                existingItem.get().setQuantity(nextQuantity);
+                existingItem.get().setUnitPrice(product.effectivePrice(Instant.now()));
                 cartItemRepository.save(existingItem.get());
             } else {
                 CartItem cloned = CartItem.builder()
                         .cart(userCart)
-                        .product(item.getProduct())
-                        .quantity(item.getQuantity())
-                        .unitPrice(item.getProduct().effectivePrice(Instant.now()))
+                        .product(product)
+                        .quantity(Math.min(item.getQuantity(), product.getStock()))
+                        .unitPrice(product.effectivePrice(Instant.now()))
                         .build();
                 userCart.getItems().add(cloned);
                 cartItemRepository.save(cloned);
@@ -162,7 +179,7 @@ public class CartService {
 
         cartRepository.save(userCart);
         cartRepository.delete(guestCart);
-        return toResponse(userCart);
+        return userCart;
     }
 
     @Transactional(readOnly = true)
