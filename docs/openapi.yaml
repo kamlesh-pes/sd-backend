@@ -101,7 +101,53 @@ paths:
         '201':
           description: Order created
 components:
+  responses:
+    ErrorResponse:
+      description: Standard API error payload
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
   schemas:
+    ApiError:
+      type: object
+      required:
+        - timestamp
+        - status
+        - error
+        - message
+        - path
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: UTC timestamp when the error occurred.
+        status:
+          type: integer
+          example: 400
+          description: HTTP status code.
+        error:
+          type: string
+          example: Bad Request
+          description: Short error category.
+        message:
+          type: string
+          example: Validation failed for request payload.
+          description: Human-readable error message.
+        path:
+          type: string
+          example: /api/v1/orders
+          description: Request path that triggered the error.
+        correlationId:
+          type: string
+          example: 4f2c3de5-31b0-4f9a-9366-0be07eb16dd7
+          description: Request correlation ID for tracing.
+        details:
+          type: array
+          description: Additional validation or business-rule details.
+          items:
+            type: string
+            example: email is required
     LoginRequest:
       type: object
       required:
