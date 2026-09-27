@@ -1,0 +1,125 @@
+openapi: 3.0.3
+info:
+  title: Sahastra Digital Backend API
+  version: 1.0.0
+  description: OpenAPI contract for the Sahastra Digital backend.
+servers:
+  - url: http://localhost:8080/api/v1
+paths:
+  /auth/login:
+    post:
+      summary: Authenticate a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful authentication
+  /products:
+    get:
+      summary: List products
+      parameters:
+        - in: query
+          name: category
+          schema:
+            type: string
+        - in: query
+          name: brand
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 0
+        - in: query
+          name: size
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Product page
+  /products/{id}:
+    get:
+      summary: Fetch one product
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Product record
+  /search:
+    get:
+      summary: Search products
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 0
+        - in: query
+          name: size
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Search results
+  /cart:
+    get:
+      summary: Fetch cart
+      responses:
+        '200':
+          description: Cart payload
+  /orders:
+    get:
+      summary: List orders
+      responses:
+        '200':
+          description: Orders payload
+    post:
+      summary: Create order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+      responses:
+        '201':
+          description: Order created
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    OrderRequest:
+      type: object
+      required:
+        - cartId
+      properties:
+        cartId:
+          type: string
+        idempotencyKey:
+          type: string
