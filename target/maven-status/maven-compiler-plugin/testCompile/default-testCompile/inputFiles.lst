@@ -5,6 +5,7 @@ C:\Users\Administrator\sd-repo\sd-backend\src\test\java\com\sahastra\backend\com
 C:\Users\Administrator\sd-repo\sd-backend\src\test\java\com\sahastra\backend\domain\ProductPricingTest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\test\java\com\sahastra\backend\exception\ExceptionTest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\test\java\com\sahastra\backend\integration\PostgresMigrationIntegrationTest.java
+C:\Users\Administrator\sd-repo\sd-backend\src\test\java\com\sahastra\backend\performance\LoadTestMetricsTest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\test\java\com\sahastra\backend\security\ratelimit\RateLimitServiceTest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\test\java\com\sahastra\backend\security\SecurityAuthorizationTest.java
 C:\Users\Administrator\sd-repo\sd-backend\src\test\java\com\sahastra\backend\service\CartServiceTest.java

@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.sahastra.backend.security.SecurityAuthorizationTest
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 12.59 s -- in com.sahastra.backend.security.SecurityAuthorizationTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.150 s -- in com.sahastra.backend.security.SecurityAuthorizationTest

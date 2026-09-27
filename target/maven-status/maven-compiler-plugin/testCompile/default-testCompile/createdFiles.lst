@@ -1,0 +1,16 @@
+com\sahastra\backend\service\OrderServiceTest.class
+com\sahastra\backend\api\dto\UnknownFieldContractTest.class
+com\sahastra\backend\security\ratelimit\RateLimitServiceTest.class
+com\sahastra\backend\service\ReportServiceTest.class
+com\sahastra\backend\common\CorrelationIdFilterTest.class
+com\sahastra\backend\api\controller\HealthControllerTest.class
+com\sahastra\backend\domain\ProductPricingTest.class
+com\sahastra\backend\service\OTPServiceTest.class
+com\sahastra\backend\exception\ExceptionTest.class
+com\sahastra\backend\security\SecurityAuthorizationTest.class
+com\sahastra\backend\service\PaymentServiceTest.class
+com\sahastra\backend\api\controller\ProductControllerTest.class
+com\sahastra\backend\service\SystemSettingServiceTest.class
+com\sahastra\backend\service\DiscountServiceTest.class
+com\sahastra\backend\integration\PostgresMigrationIntegrationTest.class
+com\sahastra\backend\service\CartServiceTest.class
