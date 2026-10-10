@@ -11,6 +11,8 @@ Normalize E.164. Store only hash/HMAC. Default expiry 5m and max 5 attempts. Rat
 ## Email verification
 Registration sends a single-use email verification link. Tokens are generated with a cryptographically secure random generator, only their SHA-256 hashes are persisted, and they expire after 24 hours by default. Configure SMTP credentials through environment variables; never commit mailbox credentials.
 
+For Zoho Mail, set `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, and `MAIL_FROM`. Use an app-specific password for `MAIL_PASSWORD` when mailbox MFA is enabled. Set `EMAIL_VERIFICATION_URL` to the externally reachable HTTPS backend endpoint outside local development. Docker Compose requires `MAIL_PASSWORD` and passes these settings to the application container.
+
 ## Authorization
 Roles `ROLE_CUSTOMER`, `ROLE_ADMIN`. Method-level security and object-level ownership checks. Protect admin namespace.
 

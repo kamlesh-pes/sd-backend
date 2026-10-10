@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -112,6 +114,18 @@ class EmailVerificationServiceTest {
                 eq(hashToken(rawToken)), any(Instant.class))).thenReturn(Optional.empty());
 
         assertThrows(BusinessException.class, () -> emailVerificationService.verify(rawToken));
+    }
+
+    @Test
+    void reportsMailDeliveryFailureWithoutExposingSuccessfulDelivery() {
+        User user = User.builder()
+                .email("customer@example.com")
+                .firstName("Jane")
+                .build();
+        doThrow(new MailSendException("SMTP authentication failed"))
+                .when(mailSender).send(any(SimpleMailMessage.class));
+
+        assertThrows(BusinessException.class, () -> emailVerificationService.sendVerificationEmail(user));
     }
 
     private String hashToken(String rawToken) throws Exception {

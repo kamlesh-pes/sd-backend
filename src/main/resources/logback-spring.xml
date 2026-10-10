@@ -20,8 +20,8 @@
             <includeMdcAndMdc>true</includeMdcAndMdc>
             <customFields>{"service":"sahastra-backend","environment":"${ENVIRONMENT:dev}"}</customFields>
             <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
-                <maxDepthPerThrowable>30</maxDepthPerThrowable>
-                <maxLength>20480</maxLength>
+                <maxDepthPerThrowable>100</maxDepthPerThrowable>
+                <maxLength>100000</maxLength>
                 <shortenedClassNameLength>40</shortenedClassNameLength>
                 <rootCauseFirst>true</rootCauseFirst>
             </throwableConverter>

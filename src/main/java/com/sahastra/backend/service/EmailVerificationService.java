@@ -80,7 +80,8 @@ public class EmailVerificationService {
         try {
             mailSender.send(message);
         } catch (MailException exception) {
-            log.error("Email verification message could not be sent");
+            log.error("Email verification message could not be sent ({}): {}",
+                    exception.getClass().getSimpleName(), exception.getMessage(), exception);
             throw new BusinessException("EMAIL_DELIVERY_FAILED",
                     "Could not send the email verification message. Please try again later.");
         }
