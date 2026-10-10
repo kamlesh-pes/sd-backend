@@ -8,8 +8,8 @@ spring:
       fail-on-unknown-properties: true
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/sahastra_db
-    username: postgres
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/sahastra_db}
+    username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
     hikari:
