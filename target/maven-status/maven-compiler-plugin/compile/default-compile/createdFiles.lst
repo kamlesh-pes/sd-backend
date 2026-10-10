@@ -55,6 +55,7 @@ com\sahastra\backend\domain\document\ProductDocument$ProductDocumentBuilder.clas
 com\sahastra\backend\domain\entity\Brand.class
 com\sahastra\backend\domain\repository\CartItemRepository.class
 com\sahastra\backend\api\dto\CancelOrderRequest$CancelOrderRequestBuilder.class
+com\sahastra\backend\performance\LoadTestMetrics.class
 com\sahastra\backend\api\controller\CartController.class
 com\sahastra\backend\domain\entity\AuditLog$AuditLogBuilder.class
 com\sahastra\backend\exception\BusinessException.class
