@@ -1,7 +1,7 @@
 # Backend Security Specification
 
 ## Authentication/session
-BCrypt >=12 or Argon2id. JWT access + rotating refresh tokens. Secure httpOnly/Secure/SameSite=Strict cookies preferred. Refresh tokens hashed. Stale-token reuse revokes the token family. Device fingerprint binding, session revocation/logout everywhere, refresh-token revocation after password change/compromise, and step-up authentication for sensitive actions.
+BCrypt >=12 or Argon2id. The Argon2 password encoder requires the Bouncy Castle provider (`bcprov-jdk18on`) at runtime. JWT access + rotating refresh tokens. Secure httpOnly/Secure/SameSite=Strict cookies preferred. Refresh tokens hashed. Stale-token reuse revokes the token family. Device fingerprint binding, session revocation/logout everywhere, refresh-token revocation after password change/compromise, and step-up authentication for sensitive actions.
 
 Defaults: access 15m; customer refresh 7d; remember-me 30d; admin refresh 8h; absolute cap 30d; idle timeout 14d.
 

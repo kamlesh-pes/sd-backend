@@ -9,16 +9,19 @@ import com.sahastra.backend.security.ratelimit.RateLimitDecision;
 import com.sahastra.backend.security.ratelimit.RateLimitService;
 import com.sahastra.backend.service.ProductService;
 import com.sahastra.backend.service.SystemSettingService;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -34,6 +37,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SecurityAuthorizationTest {
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @MockBean
     private ProductService productService;
@@ -88,5 +94,14 @@ class SecurityAuthorizationTest {
                 .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:5173"))
                 .andExpect(header().string("Access-Control-Allow-Methods",
                         org.hamcrest.Matchers.containsString("POST")));
+    }
+
+    @Test
+    void configuredPasswordEncoderHashesAndMatchesPassword() {
+        String password = "test-password";
+        String encodedPassword = passwordEncoder.encode(password);
+
+        assertNotEquals(password, encodedPassword);
+        assertTrue(passwordEncoder.matches(password, encodedPassword));
     }
 }
