@@ -22,7 +22,7 @@ class PostgresMigrationIntegrationTest {
             .withPassword("test");
 
     @Test
-    void appliesAllFlywayMigrationsAndCreatesSecurityTables() throws Exception {
+    void appliesAllFlywayMigrationsAndCreatesSecurityAndEmailVerificationTables() throws Exception {
         Flyway.configure()
                 .dataSource(POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword())
                 .locations("classpath:db/migration")
@@ -33,7 +33,15 @@ class PostgresMigrationIntegrationTest {
              Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery("select count(*) from flyway_schema_history")) {
             assertTrue(resultSet.next());
-            assertTrue(resultSet.getInt(1) >= 9);
+            assertTrue(resultSet.getInt(1) >= 10);
+        }
+
+        try (Connection connection = DriverManager.getConnection(POSTGRES.getJdbcUrl(), POSTGRES.getUsername(), POSTGRES.getPassword());
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(
+                     "select to_regclass('public.email_verification_tokens') is not null")) {
+            assertTrue(resultSet.next());
+            assertTrue(resultSet.getBoolean(1));
         }
     }
 }

@@ -75,9 +75,19 @@ Typical statuses include `400` for invalid input, `401` for missing or invalid a
 }
 ```
 
-`email`, `firstName`, `lastName`, and `password` are required. Names must be 2–100 characters; password must be 8–255 characters. `phone` is optional. Registration creates an inactive account and initiates email verification.
+`email`, `firstName`, `lastName`, and `password` are required. Names must be 2–100 characters; password must be 8–255 characters. `phone` is optional. Registration creates an inactive account and sends an email verification link. The link expires after 24 hours by default and can be used once.
 
 - **Success:** `201 Created`; user data in the standard envelope.
+
+### `GET /auth/verify-email?token={token}`
+
+- **Authentication:** Public
+- **Request body:** None
+- **Query parameters:** `token` (required): one-time token delivered to the registered email address.
+- **Success:** `200`; activates the account and marks its email as verified.
+- **Failure:** `422` if the token is invalid, expired, or already used.
+
+The verification link targets this backend endpoint by default. Set `EMAIL_VERIFICATION_URL` to the externally reachable HTTPS endpoint in non-local deployments.
 
 ### `POST /auth/login`
 

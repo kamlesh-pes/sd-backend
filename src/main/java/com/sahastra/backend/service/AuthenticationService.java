@@ -41,6 +41,7 @@ public class AuthenticationService {
     private final JwtTokenUtil jwtTokenUtil;
     private final OTPService otpService;
     private final SystemSettingService systemSettingService;
+    private final EmailVerificationService emailVerificationService;
 
     @Autowired
     public AuthenticationService(
@@ -49,13 +50,15 @@ public class AuthenticationService {
             PasswordEncoder passwordEncoder,
             JwtTokenUtil jwtTokenUtil,
             OTPService otpService,
-            SystemSettingService systemSettingService) {
+            SystemSettingService systemSettingService,
+            EmailVerificationService emailVerificationService) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenUtil = jwtTokenUtil;
         this.otpService = otpService;
         this.systemSettingService = systemSettingService;
+        this.emailVerificationService = emailVerificationService;
     }
 
     /**
@@ -95,7 +98,7 @@ public class AuthenticationService {
         User savedUser = userRepository.save(user);
         log.info("User registered successfully: {}", savedUser.getId());
 
-        otpService.generateForEmail(savedUser, savedUser.getEmail());
+        emailVerificationService.sendVerificationEmail(savedUser);
 
         // Audit log
         auditLog("USER_REGISTERED", savedUser.getId(), "User", savedUser.getId().toString());
@@ -249,6 +252,11 @@ public class AuthenticationService {
     @Transactional
     public void verifyEmailOtp(String email, String code) {
         otpService.verifyEmail(email, code);
+    }
+
+    @Transactional
+    public void verifyEmailLink(String token) {
+        emailVerificationService.verify(token);
     }
 
     @Transactional

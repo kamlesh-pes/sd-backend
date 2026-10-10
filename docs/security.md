@@ -8,6 +8,9 @@ Defaults: access 15m; customer refresh 7d; remember-me 30d; admin refresh 8h; ab
 ## OTP
 Normalize E.164. Store only hash/HMAC. Default expiry 5m and max 5 attempts. Rate limit by mobile/IP and throttle resend. Never expose plaintext OTP.
 
+## Email verification
+Registration sends a single-use email verification link. Tokens are generated with a cryptographically secure random generator, only their SHA-256 hashes are persisted, and they expire after 24 hours by default. Configure SMTP credentials through environment variables; never commit mailbox credentials.
+
 ## Authorization
 Roles `ROLE_CUSTOMER`, `ROLE_ADMIN`. Method-level security and object-level ownership checks. Protect admin namespace.
 

@@ -18,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.Authentication;
@@ -159,6 +159,16 @@ public class AuthenticationController {
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .success(true)
                 .message("OTP verified successfully")
+                .correlationId(CorrelationIdContext.getCorrelationId())
+                .build());
+    }
+
+    @GetMapping("/verify-email")
+    public ResponseEntity<ApiResponse<Void>> verifyEmail(@RequestParam String token) {
+        authenticationService.verifyEmailLink(token);
+        return ResponseEntity.ok(ApiResponse.<Void>builder()
+                .success(true)
+                .message("Email verified successfully")
                 .correlationId(CorrelationIdContext.getCorrelationId())
                 .build());
     }
