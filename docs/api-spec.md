@@ -4,6 +4,8 @@ Base path: `/api/v1`
 
 This document describes the endpoints currently mapped by the backend controllers. Unless an endpoint says otherwise, JSON request bodies use `Content-Type: application/json`. Unknown JSON properties are rejected. Examples omit optional fields unless they help illustrate the request.
 
+An importable Postman collection for the documented, implemented routes is available at [postman_collection.json](./postman_collection.json). This Markdown document remains the detailed API reference.
+
 ## Common conventions
 
 ### Authentication and authorization
