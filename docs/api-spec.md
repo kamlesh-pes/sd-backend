@@ -361,7 +361,12 @@ All endpoints require `ROLE_ADMIN`.
 
 ### `POST /admin/products`
 
-- **Request body:** `ProductRequest`
+- **Content type:** `multipart/form-data`
+- **Parts:**
+  - `product` (required): JSON `ProductRequest`
+  - `image` (optional): one JPEG or PNG image, maximum 1 MiB (1,048,576 bytes) and 25 megapixels
+
+The `product` part uses the `ProductRequest` JSON fields:
 
 ```json
 {
@@ -379,14 +384,22 @@ All endpoints require `ROLE_ADMIN`.
   "attributes": {
     "color": "blue"
   },
-  "images": {
-    "primary": "https://example.com/product.jpg"
-  },
   "active": true
 }
 ```
 
-Required fields: `sku` (max 64 characters), `name` (max 200 characters), `description`, `categoryId`, `brandId`, and `basePrice` (from `0.01` to `99999999.99`). `stock` must be nonnegative. Discount fields, timestamp fields, `attributes`, and `images` are optional; `discountType` is `PERCENTAGE` or `FIXED`. `active` defaults to `true`.
+Example upload:
+
+```bash
+curl -X POST http://localhost:8080/api/v1/admin/products \
+  -H "Authorization: Bearer <admin-token>" \
+  -F 'product={"sku":"SKU-1001","name":"Example Product","description":"Product description","categoryId":"8b2f071d-6cc5-4be4-a3cf-1af9326a0f44","brandId":"de1ea672-d6d6-45d5-85fb-a3514334df44","basePrice":49.99,"stock":25,"active":true};type=application/json' \
+  -F "image=@product.jpg;type=image/jpeg"
+```
+
+Required product fields: `sku` (max 64 characters), `name` (max 200 characters), `description`, `categoryId`, `brandId`, and `basePrice` (from `0.01` to `99999999.99`). `stock` must be nonnegative. Discount fields, timestamp fields, and `attributes` are optional; `discountType` is `PERCENTAGE` or `FIXED`. `active` defaults to `true`. When `image` is supplied, resized versions are generated and their public paths are saved as `images.primary` (maximum 1200 pixels per side) and `images.thumbnail` (maximum 400 pixels per side). The original upload is also retained. Do not provide an `images` field in the product JSON; image URLs are rejected. Invalid image formats, files exceeding the configured upload limit (20 MiB by default), and images above 25 megapixels are rejected.
+
+Uploaded files and generated versions are stored under `PRODUCT_IMAGE_DIRECTORY` (default `./data/product-images`) and served at `/media/products/{generated-file-name}`. Configure that directory on persistent storage in cloud deployments; the Docker Compose configuration mounts a persistent named volume for it. Set `PRODUCT_IMAGE_MAX_SIZE` to configure the per-file limit (default `20MB`) and `PRODUCT_IMAGE_MAX_REQUEST_SIZE` to configure the multipart request limit (default `50MB`); keep the request limit larger than the file limit to allow multipart overhead.
 
 - **Success:** `201 Created`; created product in the standard envelope.
 

@@ -1,6 +1,5 @@
 package com.sahastra.backend.api.advice;
 
-import com.sahastra.backend.api.dto.ApiResponse;
 import com.sahastra.backend.api.dto.ErrorResponse;
 import com.sahastra.backend.common.CorrelationIdContext;
 import com.sahastra.backend.exception.AccessDeniedException;
@@ -15,6 +14,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -138,6 +139,26 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    @ExceptionHandler(MultipartException.class)
+    public ResponseEntity<ErrorResponse> handleMultipartException(MultipartException ex, WebRequest request) {
+        HttpStatus status = hasCause(ex, MaxUploadSizeExceededException.class)
+                ? HttpStatus.PAYLOAD_TOO_LARGE
+                : HttpStatus.BAD_REQUEST;
+        String code = status == HttpStatus.PAYLOAD_TOO_LARGE ? "UPLOAD_TOO_LARGE" : "INVALID_MULTIPART_REQUEST";
+        String message = status == HttpStatus.PAYLOAD_TOO_LARGE
+                ? "Uploaded file exceeds the maximum allowed size"
+                : "Multipart request is invalid";
+        log.warn("Multipart request rejected: {}", ex.getMessage());
+        ErrorResponse response = ErrorResponse.builder()
+                .error(ErrorResponse.ErrorDetails.builder()
+                        .code(code)
+                        .message(message)
+                        .correlationId(getCorrelationId())
+                        .build())
+                .build();
+        return ResponseEntity.status(status).body(response);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(
             Exception ex, WebRequest request) {
@@ -152,5 +173,14 @@ public class GlobalExceptionHandler {
                 .build();
         
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    private boolean hasCause(Throwable exception, Class<? extends Throwable> causeType) {
+        for (Throwable cause = exception; cause != null; cause = cause.getCause()) {
+            if (causeType.isInstance(cause)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
