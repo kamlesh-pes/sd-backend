@@ -1,5 +1,8 @@
 package com.sahastra.backend.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.core5.http.HttpHost;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
@@ -33,13 +36,13 @@ public class OpenSearchConfig {
     private boolean sslEnabled;
 
     @Bean
-    public OpenSearchClient openSearchClient() {
+    public OpenSearchClient openSearchClient(ObjectMapper objectMapper) {
         try {
             String scheme = sslEnabled ? "https" : "http";
             HttpHost httpHost = new HttpHost(scheme, host, port);
 
             ApacheHttpClient5Transport transport = ApacheHttpClient5TransportBuilder.builder(httpHost)
-                    .setMapper(new JacksonJsonpMapper())
+                    .setMapper(new JacksonJsonpMapper(createOpenSearchObjectMapper(objectMapper)))
                     .setHttpClientConfigCallback(httpClientBuilder -> {
                         if (username != null && !username.isBlank() && password != null) {
                             org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider credentialsProvider =
@@ -61,5 +64,11 @@ public class OpenSearchConfig {
             log.error("Failed to initialize OpenSearch client", e);
             throw new RuntimeException("OpenSearch initialization failed", e);
         }
+    }
+
+    static ObjectMapper createOpenSearchObjectMapper(ObjectMapper objectMapper) {
+        return objectMapper.copy()
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 }

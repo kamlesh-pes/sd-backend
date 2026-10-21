@@ -42,6 +42,12 @@
             <version>0.4.20</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.sejda.imageio</groupId>
+            <artifactId>webp-imageio</artifactId>
+            <version>0.1.6</version>
+        </dependency>
+
         <!-- SMTP email delivery -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

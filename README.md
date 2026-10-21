@@ -53,6 +53,33 @@ Required runtime settings include:
 
 Production secrets should be stored in a vault or cloud secret manager, not in source control.
 
+## OpenSearch product index
+
+Create the `products` index before using search. For a local OpenSearch installation
+with HTTPS and a self-signed certificate, run this in PowerShell, using the same
+credentials and endpoint configured for the backend:
+
+```powershell
+$credentials = '{0}:{1}' -f $env:OPENSEARCH_USERNAME, $env:OPENSEARCH_PASSWORD
+curl.exe --insecure --user $credentials --request PUT "https://localhost:9200/products"
+```
+
+`--insecure` is for local self-signed certificates only. In production, trust the
+OpenSearch CA certificate instead of disabling certificate verification.
+
+The local Docker Compose OpenSearch service has security disabled and uses HTTP;
+create the index with:
+
+```powershell
+curl.exe --request PUT "http://localhost:9200/products"
+```
+
+An acknowledged response means the index was created. To verify it, request
+`/_cat/indices?v` from the same OpenSearch endpoint. Creating the index does not
+populate it with products already in PostgreSQL. New or updated products are
+indexed after their database transaction commits; existing products need to be
+re-saved or explicitly reindexed before they appear in search.
+
 ## Core endpoints
 
 - Auth: `/api/v1/auth/**`

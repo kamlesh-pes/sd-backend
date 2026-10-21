@@ -42,6 +42,22 @@ class ProductImageStorageServiceTest {
     }
 
     @Test
+    void storesOriginalAndGenerates1200And400PixelWebps() throws IOException {
+        byte[] webp = webpImage();
+
+        ProductImageStorageService.StoredImage stored = storageService().store(
+                new MockMultipartFile("image", "product.webp", "image/webp", webp));
+
+        assertEquals("webp", stored.path().getFileName().toString().substring(
+                stored.path().getFileName().toString().lastIndexOf('.') + 1));
+        assertArrayEquals(webp, Files.readAllBytes(stored.originalPath()));
+        assertEquals(1200, ImageIO.read(stored.path().toFile()).getWidth());
+        assertEquals(600, ImageIO.read(stored.path().toFile()).getHeight());
+        assertEquals(400, ImageIO.read(stored.thumbnailPath().toFile()).getWidth());
+        assertEquals(200, ImageIO.read(stored.thumbnailPath().toFile()).getHeight());
+    }
+
+    @Test
     void rejectsFilesLargerThanConfiguredSize() {
         byte[] tooLarge = new byte[(int) ProductImageStorageService.MAX_IMAGE_SIZE_BYTES + 1];
 
@@ -80,6 +96,15 @@ class ProductImageStorageServiceTest {
         BufferedImage image = new BufferedImage(1600, 800, BufferedImage.TYPE_INT_RGB);
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         ImageIO.write(image, "png", output);
+        return output.toByteArray();
+    }
+
+    private byte[] webpImage() throws IOException {
+        BufferedImage image = new BufferedImage(1600, 800, BufferedImage.TYPE_INT_RGB);
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        if (!ImageIO.write(image, "webp", output)) {
+            throw new IOException("WebP ImageIO writer is unavailable");
+        }
         return output.toByteArray();
     }
 }

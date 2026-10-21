@@ -47,8 +47,9 @@ public class ProductImageStorageService {
         }
         String contentType = file.getContentType();
         if (contentType != null && !contentType.equals("image/jpeg")
-                && !contentType.equals("image/png") && !contentType.equals("application/octet-stream")) {
-            throw new ValidationException("Product image must be a JPEG or PNG file");
+                && !contentType.equals("image/png") && !contentType.equals("image/webp")
+                && !contentType.equals("application/octet-stream")) {
+            throw new ValidationException("Product image must be a JPEG, PNG, or WebP file");
         }
 
         final byte[] bytes;
@@ -134,6 +135,8 @@ public class ProductImageStorageService {
                     extension = "jpg";
                 } else if (format.equals("png")) {
                     extension = "png";
+                } else if (format.equals("webp")) {
+                    extension = "webp";
                 } else {
                     throw invalidImage();
                 }
@@ -185,7 +188,7 @@ public class ProductImageStorageService {
     }
 
     private ValidationException invalidImage() {
-        return new ValidationException("Product image must be a valid JPEG or PNG file");
+        return new ValidationException("Product image must be a valid JPEG, PNG, or WebP file");
     }
 
     private record ValidatedImage(String extension, BufferedImage bufferedImage) {
